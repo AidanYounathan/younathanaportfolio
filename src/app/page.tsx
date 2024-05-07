@@ -1,3 +1,4 @@
+'use client'
 import HeroComponent from "@/Components/HeroComponent";
 import Image from "next/image";
 import NavbarComponent from '@/Components/NavbarComponent'
