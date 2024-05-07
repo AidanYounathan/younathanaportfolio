@@ -4,7 +4,7 @@ import GithubIcon from "../../public/github-icon.svg";
 import LinkedinIcon from "../../public/linkedin-icon.svg";
 import Link from "next/link";
 import Image from "next/image";
-import { sendEmail } from '@/app/api/send/route';
+
 
 
 const EmailComponent = () => {
@@ -12,51 +12,15 @@ const EmailComponent = () => {
     const [emailSubmitted, setEmailSubmitted] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    
 
       // Get data from the form
-      const formData = new FormData(e.currentTarget);
-      const senderEmail = formData.get('senderEmail');
-      const subject = formData.get('subject');
-      const message = formData.get('message');
+      // const formData = new FormData(e.currentTarget);
+      // const senderEmail = formData.get('senderEmail');
+      // const subject = formData.get('subject');
+      // const message = formData.get('message');
 
-      if (!senderEmail || !subject || !message) {
-          setErrorMessage('All fields are required.');
-          return;
-      }
-
-      const data = JSON.stringify({
-          senderEmail,
-          subject,
-          message
-      });
-
-      const options = {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: data
-      };
-
-      try {
-          const response = await fetch('/api/send', options);
-          const resData = await response.json(); // assumes server always responds with JSON
-
-          if (response.ok) {
-              setEmailSubmitted(true);
-              setErrorMessage('');
-              console.log("Message sent:", resData);
-          } else {
-              throw new Error(resData.message || "Failed to send message");
-          }
-      } catch (error) {
-          console.error("Sending failed:", error);
-          const message = error instanceof Error ? error.message : "An unknown error occurred";
-            setErrorMessage(message);
-      }
-  };
+      
 
   return (
     <section
@@ -91,9 +55,7 @@ const EmailComponent = () => {
             Email sent successfully!
           </p>
         ) : (
-          <form className="flex flex-col" action={async (formData)=> {
-            await sendEmail(formData);
-          }}>
+          <form className="flex flex-col">
             <div className="mb-6">
               <label
                 htmlFor="email"
