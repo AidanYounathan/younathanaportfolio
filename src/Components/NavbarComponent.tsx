@@ -35,7 +35,7 @@ const [navbarOpen, setNavbarOpen] = useState(false);
             href={"/"}
             className="text-2xl md:text-5xl text-white font-semibold"
           >
-            LOGO
+            AIDAN YOUNATHAN
           </Link>
           <div className="mobile-menu block md:hidden">
             {!navbarOpen ? (

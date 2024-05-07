@@ -19,7 +19,7 @@ const TabButtonComponent: React.FC<TabButtonProps> = ({ active, selectTab, child
     const buttonClasses = active ? "text-white" : "text-[#ADB7BE]";
   return (
     <button onClick={selectTab}>
-      <p className={`mr-3 text-xl font-bold hover:text-white ${buttonClasses}`}>
+      <p className={`mr-3 md:text-xl md:font-bold hover:text-white ${buttonClasses}`}>
         {children}
       </p>
       <motion.div
