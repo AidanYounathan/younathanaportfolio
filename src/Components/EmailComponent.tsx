@@ -4,6 +4,7 @@ import GithubIcon from "../../public/github-icon.svg";
 import LinkedinIcon from "../../public/linkedin-icon.svg";
 import Link from "next/link";
 import Image from "next/image";
+import { sendEmail } from '@/app/api/send/route';
 
 
 const EmailComponent = () => {
@@ -79,7 +80,9 @@ const EmailComponent = () => {
             Email sent successfully!
           </p>
         ) : (
-          <form className="flex flex-col" onSubmit={handleSubmit}>
+          <form className="flex flex-col" action={async (formData)=> {
+            await sendEmail(formData);
+          }}>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -88,12 +91,12 @@ const EmailComponent = () => {
                 Your email
               </label>
               <input
-                name="email"
+                name="senderEmail"
                 type="email"
                 id="email"
                 required
                 className="bg-[#18191E] border border-[#33353F] placeholder-[#9CA2A9] text-gray-100 text-sm rounded-lg block w-full p-2.5"
-                placeholder="jacob@google.com"
+                placeholder="Your Email"
               />
             </div>
             <div className="mb-6">

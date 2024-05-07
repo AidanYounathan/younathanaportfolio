@@ -1,33 +1,37 @@
-'use client'
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+
 import { Resend } from "resend";
 
+console.log(process.env.RESEND_API_KEY)
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.FROM_EMAIL || 'default@example.com';
 
-export async function POST(req: NextApiRequest, res: NextApiRequest) {
-  
-  // console.log(email, subject, message);
-  try {
-    const { data, error } = await resend.emails.send({
-      from: fromEmail,
-      to: ['ayounathan05@gmail.com'],
-      subject: subject,
-      react: (
-        <>
-          {/* <h1>{subject}</h1> */}
-          <p>Thank you for contacting us!</p>
-          <p>New message submitted:</p>
-          {/* <p>{message}</p> */}
-        </>
-      ),
-    });
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error });
+
+export const sendEmail = async (formData: FormData) =>{
+  const senderEmail = formData.get("senderEmail");
+  const message = formData.get("message");
+  const subject = formData.get("subject");
+  if (!message || typeof message !== 'string') {
+    return{
+      error: "Invalid Message",
+    }
   }
-  
+
+  await resend.emails.send({
+    from: senderEmail as string,
+    to: ["ayounathan05@gmail.com"],
+    subject: subject as string,
+    reply_to: senderEmail as string,
+    text: message
+  })
+
 }
 
-// Need to get working
+// const resend = new Resend('re_56QvpZWC_NvHV5zjWncqtdLyiHeqSXyLy');
+
+// resend.emails.send({
+//   from: 'onboarding@resend.dev',
+//   to: 'ayounathan05@gmail.com',
+//   subject: 'Hello World',
+//   html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
+// });
+
+// // // Need to get working
