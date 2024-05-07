@@ -8,46 +8,55 @@ import { sendEmail } from '@/app/api/send/route';
 
 
 const EmailComponent = () => {
+    
     const [emailSubmitted, setEmailSubmitted] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    const target = e.target as typeof e.target & {
-        email: { value: string };
-        subject: { value: string };
-        message: { value: string };
+      // Get data from the form
+      const formData = new FormData(e.currentTarget);
+      const senderEmail = formData.get('senderEmail');
+      const subject = formData.get('subject');
+      const message = formData.get('message');
+
+      if (!senderEmail || !subject || !message) {
+          setErrorMessage('All fields are required.');
+          return;
+      }
+
+      const data = JSON.stringify({
+          senderEmail,
+          subject,
+          message
+      });
+
+      const options = {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: data
       };
 
-    const data = {
-      email: target.email.value,
-      subject: target.subject.value,
-      message: target.message.value,
-    };
-    const JSONdata = JSON.stringify(data);
-    const endpoint = "/api/send";
+      try {
+          const response = await fetch('/api/send', options);
+          const resData = await response.json(); // assumes server always responds with JSON
 
-    // Form the request for sending data to the server.
-    const options = {
-      // The method is POST because we are sending data.
-      method: "POST",
-      // Tell the server we're sending JSON.
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Body of the request is the JSON data we created above.
-      body: JSONdata,
-    };
-
-    const response = await fetch(endpoint, options);
-    const resData = await response.json();
-
-    if (response.status === 200) {
-      console.log("Message sent.");
-      setEmailSubmitted(true);
-    }
+          if (response.ok) {
+              setEmailSubmitted(true);
+              setErrorMessage('');
+              console.log("Message sent:", resData);
+          } else {
+              throw new Error(resData.message || "Failed to send message");
+          }
+      } catch (error) {
+          console.error("Sending failed:", error);
+          const message = error instanceof Error ? error.message : "An unknown error occurred";
+            setErrorMessage(message);
+      }
   };
-
 
   return (
     <section
@@ -73,6 +82,8 @@ const EmailComponent = () => {
             <Image src={LinkedinIcon} alt="Linkedin Icon" />
           </Link>
         </div>
+        <p className='text-[#ADB7BE] mt-4 mb-4 max-w-md'><span className='font-bold'>Email:</span> Ayounathan05@gmail.com</p>
+        <p className='text-[#ADB7BE] mb-4 max-w-md'><span className='font-bold'>Phone:</span> (209)-985-2689</p>
       </div>
       <div>
         {emailSubmitted ? (

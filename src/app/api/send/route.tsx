@@ -1,29 +1,66 @@
 
+// import { Resend } from "resend";
+
+// console.log(process.env.RESEND_API_KEY)
+// const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+// export const sendEmail = async (formData: FormData) =>{
+//   const senderEmail = formData.get("senderEmail");
+//   const message = formData.get("message");
+//   const subject = formData.get("subject");
+//   if (!message || typeof message !== 'string') {
+//     return{
+//       error: "Invalid Message",
+//     }
+//   }
+
+//   await resend.emails.send({
+//     from: senderEmail as string,
+//     to: ["ayounathan05@gmail.com"],
+//     subject: subject as string,
+//     reply_to: senderEmail as string,
+//     text: message
+//   })
+
+// }
+
+
+
 import { Resend } from "resend";
 
-console.log(process.env.RESEND_API_KEY)
+// Ensure the API key is logged correctly
+console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-
-export const sendEmail = async (formData: FormData) =>{
+export const sendEmail = async (formData: FormData) => {
   const senderEmail = formData.get("senderEmail");
   const message = formData.get("message");
   const subject = formData.get("subject");
-  if (!message || typeof message !== 'string') {
-    return{
-      error: "Invalid Message",
-    }
+
+  // Validate message and senderEmail
+  if (!message || typeof message !== 'string' || !senderEmail || typeof senderEmail !== 'string') {
+    return {
+      error: "Invalid input data",
+    };
   }
 
-  await resend.emails.send({
-    from: senderEmail as string,
-    to: ["ayounathan05@gmail.com"],
-    subject: subject as string,
-    reply_to: senderEmail as string,
-    text: message
-  })
-
+  try {
+    await resend.emails.send({
+      from: senderEmail,
+      to: ["ayounathan05@gmail.com"],
+      subject: subject as string,
+      reply_to: senderEmail,
+      text: message,
+    });
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    return { error: "Failed to send email due to server error." };
+  }
 }
+
+
 
 // const resend = new Resend('re_56QvpZWC_NvHV5zjWncqtdLyiHeqSXyLy');
 
