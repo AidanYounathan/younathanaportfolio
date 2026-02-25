@@ -283,16 +283,22 @@ const EmailComponent = () => {
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
-              {RECAPTCHA_SITE_KEY && (
-                <button
-                  type="button"
-                  onClick={async () => await acquireRecaptchaToken()}
-                  className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center"
-                  aria-label="Verify reCAPTCHA"
-                >
-                  {recaptchaStatus === 'loading' ? 'Verifying…' : 'Verify reCAPTCHA'}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={async () => {
+                  if (RECAPTCHA_SITE_KEY) {
+                    await acquireRecaptchaToken();
+                  } else {
+                    // Helpful message for deployments where the NEXT_PUBLIC_RECAPTCHA_SITE_KEY is not set
+                    setErrorMessage('reCAPTCHA is not configured on this deployment. Add NEXT_PUBLIC_RECAPTCHA_SITE_KEY to your host environment and redeploy.');
+                    setRecaptchaStatus('failed');
+                  }
+                }}
+                className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center"
+                aria-label="Verify reCAPTCHA"
+              >
+                {recaptchaStatus === 'loading' ? 'Verifying…' : (RECAPTCHA_SITE_KEY ? 'Verify reCAPTCHA' : 'Enable reCAPTCHA')}
+              </button>
             </div>
             {/* Container where the reCAPTCHA badge will be moved so it appears under the button */}
             <div ref={badgeContainerRef} className="mt-2 flex justify-center" aria-hidden="true" />
