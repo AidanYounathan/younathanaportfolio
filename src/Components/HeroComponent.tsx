@@ -19,11 +19,11 @@ const HeroComponent = () => {
               sequence={[
                 "Aidan",
                 1000,
-                "A Web Developer",
+                "A Software Engineer",
                 1000,
-                "A Mobile Developer",
+                "A Photographer",
                 1000,
-                "A Fullstack Dev",
+                "A Problem Solver",
                 1000,
               ]}
               wrapper="span"
@@ -36,8 +36,7 @@ const HeroComponent = () => {
           </h1>
           <p className='text-[#bdc9d1] mt-4 sm:text-lg text-base font-medium lg:text-xl mb-6'>Welcome to my portfolio! Feel free to look around and browse, if you have any questions feel free to send an email or add me on LinkedIn!</p>
           <div>
-            <button className='px-6 py-3 rounded-full w-full sm:w-fit mr-4 bg-gradient-to-br from-blue-600 via-purple-800 to-pink-500 text-white hover:bg-slate-200'>Hire Me</button>
-            <a href="/AidanYounathanResume.pdf" download="AidanYounathanResume.pdf"><button className='px-1 py-1 rounded-full w-full sm:w-fit bg-gradient-to-r from-blue-500 via-purple-900 to-pink-500 hover:bg-slate-800 text-white  mt-3' ><span className='block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2'>Download CV</span></button></a>
+            <a href="/AidanYounathanResume.pdf" download="AidanYounathanResume.pdf"><button className='px-1 py-1 rounded-full w-full sm:w-fit bg-gradient-to-r from-blue-500 via-purple-900 to-pink-500 hover:bg-slate-800 text-white  mt-3' ><span className='block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2'>Download Resume</span></button></a>
           </div>
         </div>
         <div className='col-span-5 place-self-center mt-4 lg:mt-0'>

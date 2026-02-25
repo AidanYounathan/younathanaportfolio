@@ -7,50 +7,87 @@ import ProjectCard from './ProjectCard';
 const projectsData = [
     {
       id: 1,
-      title: "Caddy Track",
-      description: "Golf Club Tracking Site / Full Stack Project built in NextJS with TS",
+      title: "Caddy Track (Deprecated)",
+  description: "Golf club tracking site focused on player stats and club usage. Built with Next.js and TypeScript - it demonstrates full-stack patterns, responsive UI, and integrations for data persistence.",
       image: "/images/CaddyTrack.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/caddytrackfrontend",
-      previewUrl: "https://caddytrackfrontend.vercel.app",
+      previewUrl: "https://github.com/AidanYounathan/caddytrackfrontend",
+      tech: ["Next.js", "TypeScript", "Tailwind", "Node.js"],
+      year: "2022",
+      role: "Full-stack Developer",
+      highlights: [
+        "Player and club tracking dashboard with historical stats",
+        "Responsive UI with image previews and interactive charts",
+        "Authentication and user profiles",
+      ],
     },
     {
       id: 2,
       title: "One Dex",
-      description: "Pokedex web app using Pokemon API in React with TS",
+      description: "Pokedex-style web app that consumes the public Pokemon API. Focused on fast search, filter, and a clean UI built with React + TypeScript.",
       image: "/images/OneDex.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/younathanapokemonapireactbuild/tree/main/pokemonapi",
       previewUrl: "https://younathanapokemonapireactbuild.vercel.app/",
+      tech: ["React", "TypeScript", "REST API", "CSS"],
+      year: "2023",
+      role: "Front-end Developer",
+      highlights: [
+        "Search and filter by type, ability and stats",
+        "Lightweight client-side caching for snappy navigation",
+        "Mobile-friendly grid and card layout",
+      ],
     },
     {
       id: 3,
       title: "Most Influential Person",
-      description: "Blog website built in React",
+      description: "A content-driven blog site built with React. Emphasizes accessible typography, SEO-friendly structure, and a simple CMS-friendly content pipeline.",
       image: "/images/MIP.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/YounathanAInfluentialPersonWebsite",
       previewUrl: "https://younathan-a-influential-person-website.vercel.app/",
+      tech: ["React", "Markdown", "CSS"],
+      year: "2023",
+      role: "Full-stack / Content Engineer",
+      highlights: [
+        "Content-first layout with fast page loads",
+        "Responsive images and accessible markup",
+        "Author and tag pages for improved navigation",
+      ],
     },
     {
       id: 4,
       title: "Tip Calculator",
-      description: "Simple Tip Calcultor built in NextJS with TS (Design Provided by Frontend Mentor)",
+      description: "A pixel-perfect implementation of a tip calculator (Frontend Mentor design). Focuses on UX details, validation, and precise layout using Next.js + TypeScript.",
       image: "/images/TipCalc.png",
       tag: ["All", "Web"],
       gitUrl: "/",
       previewUrl: "https://younathan-a-tip-calculator.vercel.app/",
+      tech: ["Next.js", "TypeScript", "Tailwind"],
+      year: "2023",
+      role: "Front-end Developer",
+      highlights: [
+        "Accurate tip calculations and responsive inputs",
+        "Keyboard-friendly controls and mobile-first design",
+      ],
     },
     {
       id: 5,
-      title: "Daily Dose",
-      description: "In Development ",
+      title: "Keystone",
+  description: "In development - a minimal macOS task tracker focused on daily momentum. Features fast task creation, subtasks, and end-of-day review workflows to move unfinished work forward.",
       image: "/images/IP3.jpg",
-      tag: ["All", "Mobile"],
+      tag: ["All", "App"],
       gitUrl: "/",
       previewUrl: "/",
+      tech: ["Prototype"],
+      year: "In progress",
+      role: "Product / Lead Developer",
+      highlights: [
+        "Fast keyboard-first task entry",
+        "Collapsible subtasks with quick navigation",
+      ],
     },
-    
   ];
 
 const ProjectsComponent = () => {
@@ -94,6 +131,11 @@ const ProjectsComponent = () => {
           name="Mobile"
           isSelected={tag === "Mobile"}
         />
+        <ProjectTagComponent
+          onClick={handleTagChange}
+          name="App"
+          isSelected={tag === "App"}
+        />
       </div>
       <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12">
         {filteredProjects.map((project, index) => (
@@ -108,9 +150,13 @@ const ProjectsComponent = () => {
               key={project.id}
               title={project.title}
               description={project.description}
-              imgUrl={project.image}
-              gitUrl={project.gitUrl}
-              previewUrl={project.previewUrl}
+                imgUrl={project.image}
+                gitUrl={project.gitUrl}
+                previewUrl={project.previewUrl}
+                tech={project.tech}
+                year={project.year}
+                role={project.role}
+                highlights={project.highlights}
             />
           </motion.li>
         ))}

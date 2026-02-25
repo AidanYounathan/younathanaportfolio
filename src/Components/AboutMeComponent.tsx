@@ -3,6 +3,7 @@ import Image from 'next/image'
 import React, { useState, useTransition } from 'react'
 import AboutMeImage from '../../public/images/AboutMeImage.jpg'
 import TabButtonComponent from './TabButtonComponent'
+import { CheckIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline'
 
 
 
@@ -11,23 +12,48 @@ const TAB_DATA = [
         title: "Technologies",
         id: "Technologies",
         content: (
-            <p>HTML, C#, CSS, TypeScript, PHP, JavaScript, Java, MySQL, React, React Native, Bootstrap,
-            Tailwind, Unity, .NET Core</p>
+            <div className="mt-4">
+                <div className="flex flex-wrap gap-3">
+                    {[
+                        'HTML','C#','CSS','TypeScript','PHP','JavaScript','Java','MySQL','React','React Native','Bootstrap','Tailwind','Unity','.NET Core'
+                    ].map((tech) => (
+                        <span key={tech} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0f1724] text-sm text-white border border-slate-700">
+                            <ComputerDesktopIcon className="h-4 w-4 text-[#ADB7BE]" />
+                            {tech}
+                        </span>
+                    ))}
+                </div>
+            </div>
         ),
     },
     {
         title: "Productivity",
         id: "Productivity",
         content: (
-            <p>.NET, Azure Cloud Services, Vercel, Slack, Notion, Postman, GitHub,
-            VS Code, Figma, Jira</p>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {['.NET','Azure Cloud Services','Vercel','Slack','Notion','Postman','GitHub','VS Code','Figma','Jira'].map(item => (
+                    <div key={item} className="flex items-start gap-2 text-[#ADB7BE]">
+                        <CheckIcon className="h-5 w-5 text-primary-500 mt-1" />
+                        <span className="text-white">{item}</span>
+                    </div>
+                ))}
+            </div>
         ),
     },
     {
         title: "Certifications",
         id: "certifications",
         content: (
-            <p>Learn TypeScript, Learn Intermediate JavaScript, Learn React, Learn React Intro, </p>
+            <div className="mt-4">
+                <ul className="list-none space-y-2 text-[#ADB7BE]">
+                    {['Learn TypeScript','Learn Intermediate JavaScript','Learn React','Learn React Intro'].map(cert => (
+                        <li key={cert} className="flex items-center gap-3">
+                            <span className="inline-block w-2 h-2 bg-primary-500 rounded-full" />
+                            <span className="text-white">{cert}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         ),
     },
 ];
@@ -44,8 +70,12 @@ const AboutMeComponent = () => {
     };
     return (
         <section className='text-white'>
-            <div className="md:grid md:grid-cols-2 py-8 px-4 sm:py-16 ">
-                <Image src={AboutMeImage} alt='Coding' width={500} height={500} />
+            <div className="md:grid md:grid-cols-2 py-8 px-4 sm:py-16 gap-8 items-center">
+                <div className="w-full flex justify-center">
+                    <div className="rounded-xl overflow-hidden shadow-lg">
+                        <Image src={AboutMeImage} alt='Coding' width={520} height={520} className="object-cover object-center" />
+                    </div>
+                </div>
                 <div className="mt-4 md:mt-0 text-left flex flex-col h-full">
                     <h2 className="text-4xl font-bold text-white mb-4">About Me</h2>
                     <p className="text-base lg:text-lg">
@@ -79,7 +109,7 @@ const AboutMeComponent = () => {
                             Certifications{" "}
                         </TabButtonComponent>
                     </div>
-                    <div className="mt-2 flex">
+                    <div className="mt-4">
                         {TAB_DATA.find((t) => t.id === tab)?.content}
                     </div>
                 </div>

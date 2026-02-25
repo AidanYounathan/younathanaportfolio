@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import GithubIcon from "../../public/github-icon.svg";
 import LinkedinIcon from "../../public/linkedin-icon.svg";
 import Link from "next/link";
@@ -7,10 +7,61 @@ import Image from "next/image";
 
 
 
+// Default to your formspree id if env var isn't set so the form will post to your endpoint immediately.
+const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID || 'mjgelvnb';
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
 const EmailComponent = () => {
     
     const [emailSubmitted, setEmailSubmitted] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Dynamically load Google reCAPTCHA v3 script
+    const loadReCaptcha = (siteKey: string) => {
+      return new Promise<void>((resolve, reject) => {
+        if (typeof window === 'undefined') return reject(new Error('No window'));
+        const w = window as any;
+        if (w.grecaptcha && w.grecaptcha.execute) return resolve();
+        const existing = document.querySelector(`script[src*="google.com/recaptcha"]`);
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('reCAPTCHA script failed to load')));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('reCAPTCHA script failed to load'));
+        document.head.appendChild(script);
+      });
+    };
+
+    const badgeContainerRef = useRef<HTMLDivElement | null>(null);
+
+    // Move grecaptcha badge into our container so it appears under the button
+    const moveRecaptchaBadge = () => {
+      try {
+        const badge = document.querySelector('.grecaptcha-badge') as HTMLElement | null;
+        const container = badgeContainerRef.current;
+        if (badge && container && !container.contains(badge)) {
+          // Reset badge positioning so it sits naturally in the container
+          badge.style.position = 'static';
+          badge.style.transform = 'none';
+          badge.style.marginTop = '8px';
+          badge.style.boxShadow = 'none';
+          badge.style.width = '100%';
+          // Remove inline right/bottom styles if present
+          badge.style.right = '';
+          badge.style.bottom = '';
+          container.appendChild(badge);
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
 
     
 
@@ -47,15 +98,66 @@ const EmailComponent = () => {
           </Link>
         </div>
         <p className='text-[#ADB7BE] mt-4 mb-4 max-w-md'><span className='font-bold'>Email:</span> Ayounathan05@gmail.com</p>
-        <p className='text-[#ADB7BE] mb-4 max-w-md'><span className='font-bold'>Phone:</span> (209)-985-2689</p>
       </div>
       <div>
         {emailSubmitted ? (
-          <p className="text-green-500 text-sm mt-2">
-            Email sent successfully!
-          </p>
+          <p className="text-green-500 text-sm mt-2">Email sent successfully!</p>
         ) : (
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={async (e) => {
+            e.preventDefault();
+            setErrorMessage('');
+            setIsSubmitting(true);
+            try {
+              const formData = new FormData(e.currentTarget as HTMLFormElement);
+              const payload = {
+                senderEmail: String(formData.get('senderEmail') || ''),
+                subject: String(formData.get('subject') || ''),
+                message: String(formData.get('message') || ''),
+              };
+
+              // If Formspree is configured, POST there. Otherwise fall back to local /api/contact
+              let endpoint = '/api/contact';
+              if (FORMSPREE_ID) {
+                endpoint = `https://formspree.io/f/${FORMSPREE_ID}`;
+              }
+
+              // If reCAPTCHA site key is provided, load grecaptcha and get token (v3)
+              if (RECAPTCHA_SITE_KEY) {
+                try {
+                  await loadReCaptcha(RECAPTCHA_SITE_KEY);
+                  // Move the badge into our UI container (if grecaptcha renders it)
+                  moveRecaptchaBadge();
+                  const grecaptcha = (window as any).grecaptcha;
+                  const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact' });
+                  // Move badge again in case it was created after execute
+                  moveRecaptchaBadge();
+                  // Formspree expects the token in the `g-recaptcha-response` field
+                  (payload as any)['g-recaptcha-response'] = token;
+                } catch (recapErr) {
+                  // If recaptcha fails, continue — Formspree may reject the submission depending on server config
+                  console.warn('reCAPTCHA failed to load or execute', recapErr);
+                }
+              }
+
+              const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload),
+              });
+
+              const data = await res.json();
+              if (!res.ok) {
+                setErrorMessage(data?.error || 'Failed to send message');
+              } else {
+                setEmailSubmitted(true);
+                (e.currentTarget as HTMLFormElement).reset();
+              }
+            } catch (err: any) {
+              setErrorMessage(err?.message || 'Network error');
+            } finally {
+              setIsSubmitting(false);
+            }
+          }}>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -104,12 +206,16 @@ const EmailComponent = () => {
             </div>
             <button
               type="submit"
-              className="bg-purple-500 drop-shadow-lg hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg w-full"
+              className="bg-purple-500 drop-shadow-lg hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg w-full flex items-center justify-center"
+              disabled={isSubmitting}
             >
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
+            {/* Container where the reCAPTCHA badge will be moved so it appears under the button */}
+            <div ref={badgeContainerRef} className="mt-2 flex justify-center" aria-hidden="true" />
           </form>
         )}
+        {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
       </div>
     </section>
   )

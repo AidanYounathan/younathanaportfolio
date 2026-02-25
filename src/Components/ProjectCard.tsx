@@ -1,6 +1,7 @@
 'use client'
 import { CodeBracketIcon, EyeIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import Image from 'next/image'
 import React from 'react'
 
 interface ProjectCardProps {
@@ -9,15 +10,17 @@ interface ProjectCardProps {
     description: string;
     gitUrl: string;
     previewUrl: string;
+    tech?: string[];
+    year?: string;
+    role?: string;
+    highlights?: string[];
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ imgUrl, title, description, gitUrl, previewUrl }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ imgUrl, title, description, gitUrl, previewUrl, tech = [], year, role, highlights = [] }) => {
     return (
         <div>
-            <div
-                className="h-52 md:h-72 rounded-t-xl relative group"
-                style={{ background: `url(${imgUrl})`, backgroundSize: "cover" }}
-            >
+            <div className="h-52 md:h-72 rounded-t-xl relative group overflow-hidden">
+                <Image src={imgUrl} alt={`${title} screenshot`} fill className="object-cover object-center" />
                 <div className="overlay items-center justify-center absolute top-0 left-0 w-full h-full bg-[#181818] bg-opacity-0 hidden group-hover:flex group-hover:bg-opacity-80 transition-all duration-500 ">
                     <Link
                         href={gitUrl} target='_blank'
@@ -33,9 +36,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ imgUrl, title, description, g
                     </Link>
                 </div>
             </div>
-            <div className="text-white rounded-b-xl mt-3 bg-[#181818]py-6 px-4">
+            <div className="text-white rounded-b-xl bg-[#181818] py-6 px-4">
                 <h5 className="text-xl font-semibold mb-2">{title}</h5>
-                <p className="text-[#ADB7BE]">{description}</p>
+                {year || role ? (
+                    <div className="text-sm text-[#ADB7BE] mb-2">{year ? year : ''}{year && role ? ' · ' : ''}{role ? role : ''}</div>
+                ) : null}
+                <p className="text-[#ADB7BE] mb-3">{description}</p>
+                {tech.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                        {tech.map((t) => (
+                            <span key={t} className="text-xs px-2 py-1 bg-[#0f1724] rounded-full border border-slate-700">{t}</span>
+                        ))}
+                    </div>
+                )}
+                {highlights.length > 0 && (
+                    <ul className="list-disc ml-5 text-[#ADB7BE]">
+                        {highlights.slice(0,3).map((h) => (
+                            <li key={h} className="text-sm text-white">{h}</li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     )
