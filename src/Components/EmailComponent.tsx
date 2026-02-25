@@ -10,6 +10,7 @@ import Image from "next/image";
 // Default to your formspree id if env var isn't set so the form will post to your endpoint immediately.
 const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID || 'mjgelvnb';
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+const DISABLE_RECAPTCHA = process.env.NEXT_PUBLIC_DISABLE_RECAPTCHA === 'true';
 
 const EmailComponent = () => {
     
@@ -39,7 +40,9 @@ const EmailComponent = () => {
       });
     };
 
-    const badgeContainerRef = useRef<HTMLDivElement | null>(null);
+  const badgeContainerRef = useRef<HTMLDivElement | null>(null);
+  const [recaptchaStatus, setRecaptchaStatus] = useState<'idle'|'loading'|'success'|'failed'|'disabled'>('idle');
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
     // Move grecaptcha badge into our container so it appears under the button
     const moveRecaptchaBadge = () => {
@@ -53,6 +56,10 @@ const EmailComponent = () => {
           badge.style.marginTop = '8px';
           badge.style.boxShadow = 'none';
           badge.style.width = '100%';
+            // Ensure the badge is visible (sometimes reCAPTCHA sets inline styles to hide it)
+            badge.style.display = 'block';
+            badge.style.visibility = 'visible';
+            badge.style.opacity = '1';
           // Remove inline right/bottom styles if present
           badge.style.right = '';
           badge.style.bottom = '';
@@ -60,6 +67,38 @@ const EmailComponent = () => {
         }
       } catch (err) {
         // ignore
+      }
+    };
+
+    // Public helper: explicitly acquire a reCAPTCHA token (can be triggered by a visible button)
+    const acquireRecaptchaToken = async () => {
+      if (!RECAPTCHA_SITE_KEY) return null;
+      try {
+        setRecaptchaStatus('loading');
+        await loadReCaptcha(RECAPTCHA_SITE_KEY);
+        moveRecaptchaBadge();
+        const grecaptcha = (window as any).grecaptcha;
+        if (!grecaptcha || !grecaptcha.ready) throw new Error('grecaptcha not available');
+        const token: string = await new Promise((resolve, reject) => {
+          try {
+            grecaptcha.ready(() => {
+              grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact' })
+                .then((t: string) => resolve(t))
+                .catch((err: any) => reject(err));
+            });
+          } catch (err) {
+            reject(err);
+          }
+        });
+        moveRecaptchaBadge();
+        setRecaptchaToken(token);
+        setRecaptchaStatus('success');
+        console.log('reCAPTCHA token (manual):', token);
+        return token;
+      } catch (err) {
+        console.warn('reCAPTCHA acquisition failed', err);
+        setRecaptchaStatus('failed');
+        return null;
       }
     };
 
@@ -109,6 +148,14 @@ const EmailComponent = () => {
             setIsSubmitting(true);
             try {
               const formData = new FormData(e.currentTarget as HTMLFormElement);
+              // Honeypot check: if a bot filled this hidden field, abort submission
+              const honeypot = String(formData.get('hp_field') || '');
+              if (honeypot.trim() !== '') {
+                // treat as spam and silently fail
+                setErrorMessage('Submission flagged as spam');
+                setIsSubmitting(false);
+                return;
+              }
               const payload = {
                 senderEmail: String(formData.get('senderEmail') || ''),
                 subject: String(formData.get('subject') || ''),
@@ -121,21 +168,45 @@ const EmailComponent = () => {
                 endpoint = `https://formspree.io/f/${FORMSPREE_ID}`;
               }
 
+              // If reCAPTCHA is disabled locally, skip token acquisition
+              if (DISABLE_RECAPTCHA) {
+                setRecaptchaStatus('disabled');
+              }
+
               // If reCAPTCHA site key is provided, load grecaptcha and get token (v3)
-              if (RECAPTCHA_SITE_KEY) {
+              if (RECAPTCHA_SITE_KEY && !DISABLE_RECAPTCHA) {
                 try {
+                  setRecaptchaStatus('loading');
                   await loadReCaptcha(RECAPTCHA_SITE_KEY);
                   // Move the badge into our UI container (if grecaptcha renders it)
                   moveRecaptchaBadge();
                   const grecaptcha = (window as any).grecaptcha;
-                  const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact' });
+                  if (!grecaptcha || !grecaptcha.ready) {
+                    throw new Error('grecaptcha not available');
+                  }
+                  // Use grecaptcha.ready to ensure proper initialization
+                  const token: string = await new Promise((resolve, reject) => {
+                    try {
+                      grecaptcha.ready(() => {
+                        grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact' })
+                          .then((t: string) => resolve(t))
+                          .catch((err: any) => reject(err));
+                      });
+                    } catch (err) {
+                      reject(err);
+                    }
+                  });
                   // Move badge again in case it was created after execute
                   moveRecaptchaBadge();
                   // Formspree expects the token in the `g-recaptcha-response` field
                   (payload as any)['g-recaptcha-response'] = token;
+                  setRecaptchaToken(token);
+                  console.log('reCAPTCHA token:', token);
+                  setRecaptchaStatus('success');
                 } catch (recapErr) {
                   // If recaptcha fails, continue — Formspree may reject the submission depending on server config
                   console.warn('reCAPTCHA failed to load or execute', recapErr);
+                  setRecaptchaStatus('failed');
                 }
               }
 
@@ -204,15 +275,36 @@ const EmailComponent = () => {
                 placeholder="Let's talk about..."
               />
             </div>
-            <button
-              type="submit"
-              className="bg-purple-500 drop-shadow-lg hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg w-full flex items-center justify-center"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="bg-purple-500 drop-shadow-lg hover:bg-primary-600 text-white font-medium py-2.5 px-5 rounded-lg flex-1 flex items-center justify-center"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+              {RECAPTCHA_SITE_KEY && (
+                <button
+                  type="button"
+                  onClick={async () => await acquireRecaptchaToken()}
+                  className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center"
+                  aria-label="Verify reCAPTCHA"
+                >
+                  {recaptchaStatus === 'loading' ? 'Verifying…' : 'Verify reCAPTCHA'}
+                </button>
+              )}
+            </div>
             {/* Container where the reCAPTCHA badge will be moved so it appears under the button */}
             <div ref={badgeContainerRef} className="mt-2 flex justify-center" aria-hidden="true" />
+            {/* Visual status for reCAPTCHA token acquisition */}
+            <div className="mt-2 text-sm">
+              {recaptchaStatus === 'loading' && <span className="text-[#ADB7BE]">Verifying reCAPTCHA...</span>}
+              {recaptchaStatus === 'success' && <span className="text-green-400">reCAPTCHA verified</span>}
+              {recaptchaStatus === 'failed' && <span className="text-red-400">reCAPTCHA failed — submission will still be attempted</span>}
+              {recaptchaToken && process.env.NODE_ENV !== 'production' && (
+                <div className="mt-2 break-all text-xs text-[#ADB7BE]">Token: {recaptchaToken}</div>
+              )}
+            </div>
           </form>
         )}
         {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
