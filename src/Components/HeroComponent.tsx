@@ -50,7 +50,7 @@ const HeroComponent = () => {
           </motion.p>
 
           <motion.div variants={item}>
-            <a href="/AidanYounathanResume.pdf" download="AidanYounathanResume.pdf"><button className='px-1 py-1 rounded-full w-full sm:w-fit bg-gradient-to-r from-blue-500 via-purple-900 to-pink-500 hover:bg-slate-800 text-white  mt-3' ><span className='block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2'>Download Resume</span></button></a>
+            <a href="/Aidan_Younathan_Resume.pdf" download="Aidan_Younathan_Resume.pdf"><button className='px-1 py-1 rounded-full w-full sm:w-fit bg-gradient-to-r from-blue-500 via-purple-900 to-pink-500 hover:bg-slate-800 text-white  mt-3' ><span className='block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2'>Download Resume</span></button></a>
           </motion.div>
         </div>
 
