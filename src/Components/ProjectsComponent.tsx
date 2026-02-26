@@ -8,7 +8,7 @@ const projectsData = [
     {
       id: 1,
       title: "Caddy Track (Deprecated)",
-  description: "Golf club tracking site focused on player stats and club usage. Built with Next.js and TypeScript - it demonstrates full-stack patterns, responsive UI, and integrations for data persistence.",
+      description: "Full‑stack Next.js + TypeScript application for tracking golf clubs and player performance. Implemented data persistence, user profiles, and responsive dashboards to surface historical stats.",
       image: "/images/CaddyTrack.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/caddytrackfrontend",
@@ -25,7 +25,7 @@ const projectsData = [
     {
       id: 2,
       title: "One Dex",
-      description: "Pokedex-style web app that consumes the public Pokemon API. Focused on fast search, filter, and a clean UI built with React + TypeScript.",
+      description: "Pokedex-style single-page app consuming the public Pokemon API. Focused on performant search, filtering, and a lightweight, accessible UI built with React and TypeScript.",
       image: "/images/OneDex.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/younathanapokemonapireactbuild/tree/main/pokemonapi",
@@ -42,7 +42,7 @@ const projectsData = [
     {
       id: 3,
       title: "Most Influential Person",
-      description: "A content-driven blog site built with React. Emphasizes accessible typography, SEO-friendly structure, and a simple CMS-friendly content pipeline.",
+      description: "Content-driven site emphasizing accessibility and SEO. Built a simple content pipeline and responsive templates to improve readability and load performance.",
       image: "/images/MIP.png",
       tag: ["All", "Web"],
       gitUrl: "https://github.com/AidanYounathan/YounathanAInfluentialPersonWebsite",
@@ -59,7 +59,7 @@ const projectsData = [
     {
       id: 4,
       title: "Tip Calculator",
-      description: "A pixel-perfect implementation of a tip calculator (Frontend Mentor design). Focuses on UX details, validation, and precise layout using Next.js + TypeScript.",
+      description: "Frontend-focused UI implementation based on a design challenge. Delivered pixel‑accurate layout, input validation, and a mobile-first experience using Next.js and TypeScript.",
       image: "/images/TipCalc.png",
       tag: ["All", "Web"],
       gitUrl: "/",
@@ -75,7 +75,7 @@ const projectsData = [
     {
       id: 5,
       title: "Keystone",
-  description: "In development - a minimal macOS task tracker focused on daily momentum. Features fast task creation, subtasks, and end-of-day review workflows to move unfinished work forward.",
+      description: "In-progress macOS task-tracking prototype focused on fast, keyboard-first workflows. Built to support rapid task entry, subtasks, and end-of-day review patterns.",
       image: "/images/IP3.jpg",
       tag: ["All", "App"],
       gitUrl: "/",

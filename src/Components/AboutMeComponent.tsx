@@ -15,7 +15,7 @@ const TAB_DATA = [
             <div className="mt-4">
                 <div className="flex flex-wrap gap-3">
                     {[
-                        'HTML','C#','CSS','TypeScript','PHP','JavaScript','Java','MySQL','React','React Native','Bootstrap','Tailwind','Unity','.NET Core'
+                        'TypeScript','JavaScript','React','Next.js','Node.js','Express','PostgreSQL','MySQL','Tailwind CSS','C#','.NET Core','Unity','Git'
                     ].map((tech) => (
                         <span key={tech} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0f1724] text-sm text-white border border-slate-700">
                             <ComputerDesktopIcon className="h-4 w-4 text-[#ADB7BE]" />
@@ -79,12 +79,7 @@ const AboutMeComponent = () => {
                 <div className="mt-4 md:mt-0 text-left flex flex-col h-full">
                     <h2 className="text-4xl font-bold text-white mb-4">About Me</h2>
                     <p className="text-base lg:text-lg">
-                        I am a full stack web developer with a passion for creating
-                        interactive and responsive web applications. I have experience
-                        working with JavaScript, React, Redux, Node.js, Express, PostgreSQL,
-                        Sequelize, HTML, CSS, and Git. I am a quick learner and I am always
-                        looking to expand my knowledge and skill set. I am a team player and
-                        I am excited to work with others to create amazing applications.
+                        I build production web applications using TypeScript, Next.js, React, Node.js, and PostgreSQL. I focus on shipping maintainable code, improving performance, and delivering accessible user experiences. I enjoy collaborating with product and design teams to turn ideas into measurable features and improving systems through testing and observability.
                     </p>
                     <div className="flex justify-start mt-8">
                         <TabButtonComponent

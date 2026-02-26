@@ -12,8 +12,7 @@ const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID || 'mjgelvnb';
 
 const EmailComponent = () => {
     
-    const [emailSubmitted, setEmailSubmitted] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
       // Get data from the form
@@ -56,7 +55,6 @@ const EmailComponent = () => {
         ) : (
           <form className="flex flex-col" onSubmit={async (e) => {
             e.preventDefault();
-            setErrorMessage('');
             setIsSubmitting(true);
             try {
               const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -64,7 +62,7 @@ const EmailComponent = () => {
               const honeypot = String(formData.get('hp_field') || '');
               if (honeypot.trim() !== '') {
                 // treat as spam and silently fail
-                setErrorMessage('Submission flagged as spam');
+                console.warn('Submission flagged as spam');
                 setIsSubmitting(false);
                 return;
               }
@@ -90,13 +88,13 @@ const EmailComponent = () => {
 
               const data = await res.json();
               if (!res.ok) {
-                setErrorMessage(data?.error || 'Failed to send message');
+                console.warn(data?.error || 'Failed to send message');
               } else {
                 setEmailSubmitted(true);
                 (e.currentTarget as HTMLFormElement).reset();
               }
             } catch (err: any) {
-              setErrorMessage(err?.message || 'Network error');
+              console.error(err?.message || 'Network error');
             } finally {
               setIsSubmitting(false);
             }
@@ -167,7 +165,7 @@ const EmailComponent = () => {
             </div>
           </form>
         )}
-        {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+  {/* error messages intentionally hidden from UI; check server logs or console for details */}
       </div>
     </section>
   )

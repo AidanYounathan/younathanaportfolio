@@ -17,13 +17,13 @@ const HeroComponent = () => {
           
           <TypeAnimation
               sequence={[
-                "Aidan",
+                "Aidan Younathan",
                 1000,
-                "A Software Engineer",
+                "Software Engineer",
                 1000,
-                "A Photographer",
+                "Full‑Stack Developer",
                 1000,
-                "A Problem Solver",
+                "Photographer",
                 1000,
               ]}
               wrapper="span"
@@ -34,7 +34,7 @@ const HeroComponent = () => {
           
           
           </h1>
-          <p className='text-[#bdc9d1] mt-4 sm:text-lg text-base font-medium lg:text-xl mb-6'>Welcome to my portfolio! Feel free to look around and browse, if you have any questions feel free to send an email or add me on LinkedIn!</p>
+          <p className='text-[#bdc9d1] mt-4 sm:text-lg text-base font-medium lg:text-xl mb-6'>I&apos;m a software engineer who builds thoughtful, performant web applications. I specialize in front-end and full-stack development with a focus on clean UI, accessible design, and reliable systems. Reach out if you&apos;d like to collaborate or hire.</p>
           <div>
             <a href="/AidanYounathanResume.pdf" download="AidanYounathanResume.pdf"><button className='px-1 py-1 rounded-full w-full sm:w-fit bg-gradient-to-r from-blue-500 via-purple-900 to-pink-500 hover:bg-slate-800 text-white  mt-3' ><span className='block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2'>Download Resume</span></button></a>
           </div>
