@@ -57,7 +57,8 @@ const HeroComponent = () => {
         <motion.div className='col-span-5 place-self-center mt-4 lg:mt-0 flex justify-center' variants={item}>
           <div className='rounded-full bg-[#181818] overflow-hidden w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-[400px] lg:h-[400px] flex items-center justify-center'>
             <Image
-              src='/images/Aidan.png'
+              // Use the same image URL (with cache-bust) as the site icons so the favicon matches the circular avatar
+              src='/images/Aidan.png?v=2'
               alt='Aidan Younathan'
               width={400}
               height={400}
